@@ -1,20 +1,20 @@
 1. First steps
 systemctl --version = 243
-sun_with_face s'assurer que systemd est PID1 :
-pidof systemd -> 902 1
+sun_with_face s’assurer que systemd est PID1 :
+- pidof systemd -> 902 1
 sun_with_face check tous les autres processus système (NOT kernel processes) :
 ps ax | less ->
 2. Gestion du temps
 timedatectl sans argument fournit des informations sur la machine
 sun_with_face déterminer la différence entre Local Time, Universal Time et RTC time :
-Local Time : l'heure local (propre à la région )
-Universal Time : l'heure universelle
-RTC time : l'heure propre à ( et dans) la machine , et bien plus précise,
-l'avantage d'utiliser RTC time est pour la précision, il est possible de déclencher des tâches à la nanoseconde précise, comme cela pourrait être utile en bourse ou autre.
+Local Time : l’heure local (propre à la région )
+Universal Time : l’heure universelle
+RTC time : l’heure propre à ( et dans) la machine , et bien plus précise,
+l’avantage d’utiliser RTC time est pour la précision, il est possible de déclencher des tâches à la nanoseconde précise, comme cela pourrait être utile en bourse ou autre.
 timezones
 sun_with_face changer de timezone pour un autre fuseau horaire européen :
 timedatectl set-timezone Europe/London
-sun_with_face désactiver le service lié à la synchronisation du temps avec cette commande, et vérifier à la main qu'il a été coupé
+sun_with_face désactiver le service lié à la synchronisation du temps avec cette commande, et vérifier à la main qu’il a été coupé
 timedatectl set-ntp 0
 sudo tcpdump -n "broadcast or multicast" | grep NTP
 aucun traffic , ntp est donc désactivé
@@ -38,7 +38,7 @@ sun_with_face démarrer et activer le démarrage de systemd-networkd
 
 sudo systemctl stop systemd-networkd
 sudo systemctl disable systemd-networkd
-sun_with_face éditer la configuration d'une carte réseau de la VM avec un fichier .network
+sun_with_face éditer la configuration d’une carte réseau de la VM avec un fichier .network
 
 systemd-resolved
 sun_with_face activer la résolution de noms par systemd-resolved en démarrant le service (maintenant et au boot)
@@ -46,22 +46,21 @@ sun_with_face activer la résolution de noms par systemd-resolved en démarrant 
 sudo systemctl start systemd-resolved
 sudo systemctl enable systemd-resolved
 sudo systemctl status systemd-resolved
-sun_with_face vérifier qu'un serveur DNS tourne localement et écoute sur un port de l'interfce localhost (avec ss par exemple)
+sun_with_face vérifier qu’un serveur DNS tourne localement et écoute sur un port de l’interfce localhost (avec ss par exemple)
 
 ss -4 state listening
 nous pouvons voir notre DNS qui écoute
-sun_with_face Afin d'activer de façon permanente ce serveur DNS, la bonne pratique est de remplacer /etc/resolv.conf par un lien symbolique pointant vers /run/systemd/resolve/stub-resolv.conf
+sun_with_face Afin d’activer de façon permanente ce serveur DNS, la bonne pratique est de remplacer /etc/resolv.conf par un lien symbolique pointant vers /run/systemd/resolve/stub-resolv.conf
 
 ln –s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-- sun_with_face Modifier la configuration de systemd-resolved - elle est dans /etc/systemd/resolved.conf - ajouter les serveurs de votre choix - vérifier la modification avec resolvectl - sun_with_face mise en place de DNS over TLS - renseignez-vous sur les avantages de DNS over TLS - effectuer une configuration globale (dans /etc/systemd/resolved.conf) - compléter la clause DNS pour ajouter un serveur qui supporte le DNS over TLS (on peut en trouver des listes sur internet) - utiliser la clause DNSOverTLS pour activer la fonctionnalité - valeur opportunistic pour tester les résolutions à travers TLS, et fallback sur une résolution DNS classique en cas d'erreur - valeur yes pour forcer les résolutions à travers TLS - prouver avec tcpdump que les résolutions sont bien à travers TLS (les serveurs DNS qui supportent le DNS over TLS écoutent sur le port 853) - vous pouvez aussi ajouter DNSSEC, en passant la valeur à True dans le fichier de configuration de systemd-resolved
+sun_with_face Modifier la configuration de systemd-resolved - elle est dans /etc/systemd/resolved.conf - ajouter les serveurs de votre choix - vérifier la modification avec resolvectl - sun_with_face mise en place de DNS over TLS - renseignez-vous sur les avantages de DNS over TLS - effectuer une configuration globale (dans /etc/systemd/resolved.conf) - compléter la clause DNS pour ajouter un serveur qui supporte le DNS over TLS (on peut en trouver des listes sur internet) - utiliser la clause DNSOverTLS pour activer la fonctionnalité - valeur opportunistic pour tester les résolutions à travers TLS, et fallback sur une résolution DNS classique en cas d’erreur - valeur yes pour forcer les résolutions à travers TLS - prouver avec tcpdump que les résolutions sont bien à travers TLS (les serveurs DNS qui supportent le DNS over TLS écoutent sur le port 853) - vous pouvez aussi ajouter DNSSEC, en passant la valeur à True dans le fichier de configuration de systemd-resolved
 
 [](#5-gestion-de-sess
 5. Gestion de sessions logind
-6. Gestion d'unité basique (services)
-sun_with_face trouver l'unité associée au processus chronyd -└─system.slice ├─httpd.service ├─chronyd.service │ └─613 /usr/sbin/chronyd -u chrony
+6. Gestion d’unité basique (services)
+sun_with_face trouver l’unité associée au processus chronyd -└─system.slice ├─httpd.service ├─chronyd.service │ └─613 /usr/sbin/chronyd -u chrony
 II. Boot et Logs
-- sun_with_face générer un graphe de la séquence de boot ~~ - systemd-analyze plot > graphe.svg~~ ~~ - très utile pour du débug~~ ~~ - déterminer le temps qu'a mis sshd.service à démarrer~~ ~~- on peut aussi utiliser systemd-analyse blame en ligne de commande ~~
-
+sun_with_face générer un graphe de la séquence de boot ~~ - systemd-analyze plot > graphe.svg~~ ~~ - très utile pour du débug~~ ~~ - déterminer le temps qu’a mis sshd.service à démarrer~~ ~~- on peut aussi utiliser systemd-analyse blame en ligne de commande ~~
 III. Mécanismes manipulés par systemd
 1. cgroups
 sun_with_face identifier le cgroup utilisé par votre session SSH
@@ -102,18 +101,18 @@ Lancer un processus complètement sandboxé (conteneur ?) avec systemd-nspawn :
 sudo systemd-nspawn --ephemeral --private-network -D / bash
 vérifier que --private-network a fonctionné : ip a
 sun_with_face expliquer cette ligne de commande
-sun_with_face prouver qu'un namespace réseau différent est utilisé
+sun_with_face prouver qu’un namespace réseau différent est utilisé
 pour voir les namespaces utilisés par un processus donné, on peut aller voir dans /proc
 ls -al /proc/<PID>/ns : montre les liens vers les namespaces utilisés (identifiés par des nombres)
 si le nombre vu ici est différent du nombre vu pour un autre processus alors ils sont dans des namespaces différents
 sun_with_face ajouter au moins une option pour isoler encore un peu plus le processus lancé
 IV. systemd units in-depth
 1. Exploration de services existants
-sun_with_face observer l'unité auditd.service
+sun_with_face observer l’unité auditd.service
 
 trouver le path où est définit le fichier auditd.service
 expliquer le principe de la clause ExecStartPost
-expliquer les 4 "Security Settings" dans auditd.service
+expliquer les 4 “Security Settings” dans auditd.service
 2. Création de service simple
 sun_with_face Créer un fichier dans /etc/systemd/system qui comporte le suffixe .service :
 
@@ -125,14 +124,14 @@ doit être limité en RAM
 sun_with_face Expliquer au moins 5 cinq clauses de sécurité ajoutées
 4. Event-based activation
 A. Activation via socket UNIX
-sun_with_face Faire en sorte que Docker démarre tout seul s'il est sollicité
+sun_with_face Faire en sorte que Docker démarre tout seul s’il est sollicité
 
 avoir installer docker
 vérifier que le service docker est éteint (systemctl is-active docker)
-création d'un fichier /etc/systemd/system/docker.socket
+création d’un fichier /etc/systemd/system/docker.socket
 faire en sorte que le socket écoute sur le socket UNIX utilisé par docker
 activer le socket systemd et prouver que le démon docker se lance uniquement lorsque le socket est sollicité
-B. Activation automatique d'un point de montage
+B. Activation automatique d’un point de montage
 
 🌞 **Prouver le bon fonctionnement de l'automount**
 
@@ -150,3 +149,4 @@ Mise en place :
 -   🌞 Créer un fichier `.service` qui lance la backup
 -   🌞 Créer un fichier `.timer` qui programme la backup tous les jours à heure fixe
     -   en utilisant la clause `OnCalendar` (voir [la doc officielle](https://www.freedesktop.org/software/syste
+Markdown 14920 bytes 1375 words 191 lines Ln 5, Col 4HTML 6
