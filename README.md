@@ -154,6 +154,31 @@ Lancer un processus complètement sandboxé (conteneur ?) avec  `systemd-nspawn`
 
 ## 3. Sandboxing (heavy security)
 
+
+`systemd.unit=`, `rd.systemd.unit=`[](https://www.freedesktop.org/software/systemd/man/systemd.html#systemd.unit= "Lien permanent vers ce terme")
+
+Remplace l'unité à activer au démarrage. La valeur par défaut est `default.target`. Cela peut être utilisé pour démarrer temporairement dans une unité de démarrage différente, par exemple `rescue.target`ou `emergency.service`. Voir [systemd.special (7)](https://www.freedesktop.org/software/systemd/man/systemd.special.html#) pour plus de détails sur ces unités. L'option préfixée par " `rd.`" est uniquement prise en compte dans le disque RAM initial (initrd), tandis que celle qui n'est pas préfixée uniquement dans le système principal.
+
+`systemd.dump_core`[](https://www.freedesktop.org/software/systemd/man/systemd.html#systemd.dump_core "Lien permanent vers ce terme")
+
+Prend un argument booléen ou active l'option si elle est spécifiée sans argument. Si activé, le gestionnaire systemd (PID 1) vide le noyau en cas de plantage. Sinon, aucun core dump n'est créé. Les valeurs par défaut sont activées.
+
+	- systemd.show_status
+
+Prend un argument booléen ou la constante `auto`. Peut également être spécifié sans argument, avec le même effet qu'un booléen positif. Si activé, le gestionnaire systemd (PID 1) affiche des mises à jour succinctes sur l’état du service sur la console lors du démarrage
+
+
+	- systemd.crash_reboot
+
+Prend un argument booléen ou active l'option si elle est spécifiée sans argument. Si cette option est activée, le gestionnaire de système (PID 1) redémarre automatiquement la machine après une panne, après un délai de 10 secondes. Sinon, le système se bloquera indéfiniment. Par défaut, cette option est désactivée afin d'éviter une boucle de redémarrage. Si combiné avec `systemd.crash_shell`, le système est redémarré après la fermeture du shell.
+
+		systemd.show_status
+
+Prend un argument booléen ou la constante `auto`. Peut également être spécifié sans argument, avec le même effet qu'un booléen positif.
+
+
+
+
 -   ![sun_with_face](https://github.githubassets.com/images/icons/emoji/unicode/1f31e.png)  Expliquer au moins 5 cinq clauses de sécurité ajoutées
 
 ## 4. Event-based activation
